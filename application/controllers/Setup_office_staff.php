@@ -88,20 +88,38 @@ class Setup_office_staff extends Root_Controller
             $this->db->where('user_info.user_group !=',1);
         }
         $items=$this->db->get()->result_array();
-        foreach($items as &$item)
+        $office_staffs=array();
+        foreach($items as $item)
         {
-            if($item['group_name']==null)
-            {
-                $item['group_name']='Not Assigned';
-            }
-            if($item['blood_group']=='')
-            {
-                $item['blood_group']='Not Assigned';
-            }
+            $office_staffs[$item['id']]=$item;
         }
 
-//        print_r($items);
-        //$items=Query_helper::get_info($this->config->item('table_setup_user'),array('id','name','status','ordering'),array('status !="'.$this->config->item('system_status_delete').'"'));
+        $this->db->select('user_id, COUNT(user_id) as coworker_number');
+        $this->db->from($this->config->item('table_tms_setup_coworker'));
+        $this->db->where('revision',1);
+        $this->db->group_by('user_id');
+        $coworkers=$this->db->get()->result_array();
+
+        $this->db->select('user_id, COUNT(user_id) as subordinate_number');
+        $this->db->from($this->config->item('table_tms_setup_subordinate_employee'));
+        $this->db->where('revision',1);
+        $this->db->group_by('user_id');
+        $subordinates=$this->db->get()->result_array();
+
+        foreach($coworkers as $coworker)
+        {
+            $office_staffs[$coworker['user_id']]['coworker_number']=$coworker['coworker_number'];
+        }
+
+        foreach($subordinates as $subordinate)
+        {
+            $office_staffs[$subordinate['user_id']]['subordinate_number']=$subordinate['subordinate_number'];
+        }
+        $items=array();
+        foreach($office_staffs as $office_staff)
+        {
+            $items[]=$office_staff;
+        }
         $this->json_return($items);
     }
 
