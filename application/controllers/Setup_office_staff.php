@@ -93,24 +93,20 @@ class Setup_office_staff extends Root_Controller
         {
             $office_staffs[$item['id']]=$item;
         }
-
         $this->db->select('user_id, COUNT(user_id) as coworker_number');
         $this->db->from($this->config->item('table_tms_setup_coworker'));
         $this->db->where('revision',1);
         $this->db->group_by('user_id');
         $coworkers=$this->db->get()->result_array();
-
         $this->db->select('user_id, COUNT(user_id) as subordinate_number');
         $this->db->from($this->config->item('table_tms_setup_subordinate_employee'));
         $this->db->where('revision',1);
         $this->db->group_by('user_id');
         $subordinates=$this->db->get()->result_array();
-
         foreach($coworkers as $coworker)
         {
             $office_staffs[$coworker['user_id']]['coworker_number']=$coworker['coworker_number'];
         }
-
         foreach($subordinates as $subordinate)
         {
             $office_staffs[$subordinate['user_id']]['subordinate_number']=$subordinate['subordinate_number'];
@@ -144,16 +140,31 @@ class Setup_office_staff extends Root_Controller
                 $this->json_return($ajax);
             }
             $this->db->from($this->config->item('table_login_setup_user').' user');
-            $this->db->select('*');
+            $this->db->select('user_info.*');
+            $this->db->select('designation.name designation_name');
+            $this->db->select('department.name department_name');
             $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user.id = user_info.user_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
+            $this->db->join($this->config->item('table_login_setup_department').' department','department.id = user_info.department_id','LEFT');
             $this->db->where('user_info.revision',1);
+
             $this->db->order_by('user_info.ordering','ASC');
             if($user->user_group!=1)
             {
                 $this->db->where('user_info.user_group !=',1);
             }
             $this->db->where('user.id !=',$user_id);
-            $data['office_staffs']=$this->db->get()->result_array();
+            $this->db->where('user.status =',$this->config->item('system_status_active'));
+//            $data['office_staffs']=$this->db->get()->result_array();
+            $results=$this->db->get()->result_array();
+
+            foreach($results as $result)
+            {
+                $data['office_staffs'][$result['department_id']][]=$result;
+            }
+
+//            print_r($data['office_staffs']);
+//            exit;
             $results=Query_helper::get_info($this->config->item('table_tms_setup_subordinate_employee'),'*',array('user_id ='.$user_id,'revision =1'));
             $data['assigned_subordinate_employee']=array();
             foreach($results as $result)
@@ -200,8 +211,12 @@ class Setup_office_staff extends Root_Controller
                 $this->json_return($ajax);
             }
             $this->db->from($this->config->item('table_login_setup_user').' user');
-            $this->db->select('*');
+            $this->db->select('user_info.*');
+            $this->db->select('designation.name designation_name');
+            $this->db->select('department.name department_name');
             $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user.id = user_info.user_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
+            $this->db->join($this->config->item('table_login_setup_department').' department','department.id = user_info.department_id','LEFT');
             $this->db->where('user_info.revision',1);
             $this->db->order_by('user_info.ordering','ASC');
             if($user->user_group!=1)
@@ -209,7 +224,13 @@ class Setup_office_staff extends Root_Controller
                 $this->db->where('user_info.user_group !=',1);
             }
             $this->db->where('user.id !=',$user_id);
-            $data['office_staffs']=$this->db->get()->result_array();
+            $this->db->where('user.status =',$this->config->item('system_status_active'));
+            $results=$this->db->get()->result_array();
+
+            foreach($results as $result)
+            {
+                $data['office_staffs'][$result['department_id']][]=$result;
+            }
             $results=Query_helper::get_info($this->config->item('table_tms_setup_coworker'),'*',array('user_id ='.$user_id,'revision =1'));
             $data['assigned_coworker']=array();
             foreach($results as $result)
