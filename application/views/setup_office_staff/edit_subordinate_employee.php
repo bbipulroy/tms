@@ -31,20 +31,39 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="clearfix"></div>
         </div>
-        <?php
-
-        ?>
         <div style="" class="row show-grid">
             <div class="col-xs-12">
                 <?php
-                foreach($office_staffs as $office_staff)
+                foreach($office_staffs as $offices_staff)
                 {
+                    if(is_array($offices_staff))
+                    {
                     ?>
-                    <div class="checkbox">
-                        <label title="<?php echo $office_staff['name']; ?>">
-                            <input type="checkbox" name="subordinate_employees[]" value="<?php echo $office_staff['id']; ?>" <?php if(in_array($office_staff['id'],$assigned_subordinate_employee)){echo 'checked';} ?>><?php echo $office_staff['name']; ?>
-                        </label>
-                    </div>
+                        <div class="checkbox">
+                        <?php
+                        $dept_name=false;
+                            foreach($offices_staff as $office_staff)
+                            {
+                                if(!$dept_name)
+                                {
+                                    echo '<b>'.$office_staff['department_name'].'</b>';
+                                }
+                                $dept_name=true;
+                            }
+                        ?>
+                        </div>
+
+                        <?php foreach($offices_staff as $office_staff){?>
+
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="subordinate_employees[]" value="<?php echo $office_staff['id']; ?>" <?php if(in_array($office_staff['id'],$assigned_subordinate_employee)){echo 'checked';} ?>><?php echo $office_staff['name'].' - '.$office_staff['designation_name']; ?>
+                                </label>
+                            </div>
+                        <?php
+                        }
+                      }
+                    ?>
                 <?php
                 }
                 ?>
