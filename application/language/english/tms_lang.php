@@ -162,3 +162,10 @@ $lang['LABEL_CUSTOMER_TYPE'] = 'Customer Type';
 $lang['LABEL_PICTURE'] = 'Picture';
 $lang['LABEL_MAP_ADDRESS'] = 'Google Map Link';
 $lang['LABEL_INCHARGE'] = 'In-charge';
+
+// Office staff
+$lang['LABEL_NUMBER_OF_SUBORDINATE'] = 'Number Of Subordinate';
+$lang['LABEL_NUMBER_OF_COWORKER'] = 'Number Of Co-worker';
+$lang['LABEL_CHANGE_SUBORDINATE'] = 'Change Subordinate';
+$lang['LABEL_CHANGE_COWORKER'] = 'Change Coworker';
+
