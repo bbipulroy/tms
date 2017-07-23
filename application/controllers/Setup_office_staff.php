@@ -82,6 +82,7 @@ class Setup_office_staff extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
         $this->db->join($this->config->item('table_login_setup_department').' department','department.id = user_info.department_id','LEFT');
         $this->db->where('user_info.revision',1);
+        $this->db->where('user_info.user_type_id =',1);
         $this->db->order_by('user_info.ordering','ASC');
         if($user->user_group!=1)
         {
@@ -147,7 +148,7 @@ class Setup_office_staff extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
             $this->db->join($this->config->item('table_login_setup_department').' department','department.id = user_info.department_id','LEFT');
             $this->db->where('user_info.revision',1);
-
+            $this->db->where('user_info.user_type_id =',1);
             $this->db->order_by('user_info.ordering','ASC');
             if($user->user_group!=1)
             {
@@ -218,6 +219,7 @@ class Setup_office_staff extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
             $this->db->join($this->config->item('table_login_setup_department').' department','department.id = user_info.department_id','LEFT');
             $this->db->where('user_info.revision',1);
+            $this->db->where('user_info.user_type_id =',1);
             $this->db->order_by('user_info.ordering','ASC');
             if($user->user_group!=1)
             {
