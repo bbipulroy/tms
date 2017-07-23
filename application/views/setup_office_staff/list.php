@@ -58,7 +58,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="col-xs-12" style="margin-bottom: 20px;">
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="id"><?php echo $CI->lang->line('ID'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="employee_id"><?php echo $CI->lang->line('LABEL_EMPLOYEE_ID'); ?></label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="user_name"><?php echo $CI->lang->line('LABEL_USERNAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="name"><?php echo $CI->lang->line('LABEL_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="designation_name"><?php echo $CI->lang->line('LABEL_DESIGNATION_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="department_name"><?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?></label>
@@ -83,7 +82,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataFields: [
                 { name: 'id', type: 'int' },
                 { name: 'employee_id', type: 'string' },
-                { name: 'user_name', type: 'string' },
                 { name: 'name', type: 'string' },
                 { name: 'designation_name', type: 'string' },
                 { name: 'department_name', type: 'string' },
@@ -113,7 +111,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columns: [
                     { text: '<?php echo $CI->lang->line('ID'); ?>', dataField: 'id',width:'50',cellsAlign:'right'},
                     { text: '<?php echo $CI->lang->line('LABEL_EMPLOYEE_ID'); ?>', dataField: 'employee_id',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_USERNAME'); ?>', dataField: 'user_name',width:'150'},
                     { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',width:'300'},
                     { text: '<?php echo $CI->lang->line('LABEL_DESIGNATION_NAME'); ?>', dataField: 'designation_name',width:'200'},
                     { text: '<?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?>', dataField: 'department_name',width:'200'},
