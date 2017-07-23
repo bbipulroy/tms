@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost/tms';
+$config['base_url'] = 'http://localhost/tms_2017_07';
 
 /*
 |--------------------------------------------------------------------------
@@ -378,9 +378,9 @@ $config['encryption_key'] = '';
 |
 */
 $config['sess_driver'] = 'database';
-$config['sess_cookie_name'] = 'armalik_tms';
+$config['sess_cookie_name'] = 'armalik_tms_2017_07';
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] = 'arm_tms.tms_system_session';
+$config['sess_save_path'] = 'arm_tms_2017_07.system_session';
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;

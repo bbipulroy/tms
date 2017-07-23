@@ -5,7 +5,7 @@ $CI = & get_instance();
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>TMS</title>
+        <title>TMS 2017-07</title>
         <link rel="icon" type="image/ico" href="http://malikseeds.com/favicon.ico"/>
         <meta charset="utf-8">
         <link rel="stylesheet" href="<?php echo base_url('css/bootstrap.min.css');?>">
