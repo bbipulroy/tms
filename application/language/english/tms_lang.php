@@ -168,4 +168,6 @@ $lang['LABEL_NUMBER_OF_SUBORDINATE'] = 'Number Of Subordinate';
 $lang['LABEL_NUMBER_OF_COWORKER'] = 'Number Of Co-worker';
 $lang['LABEL_CHANGE_SUBORDINATE'] = 'Change Subordinate';
 $lang['LABEL_CHANGE_COWORKER'] = 'Change Coworker';
+$lang['LABEL_SUBORDINATE'] = 'Subordinate';
+$lang['LABEL_COWORKER'] = 'Co-worker';
 
