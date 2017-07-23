@@ -161,7 +161,6 @@ class Setup_office_staff extends Root_Controller
             }
             $this->db->where('user.id !=',$user_id);
             $this->db->where('user.status =',$this->config->item('system_status_active'));
-//            $data['office_staffs']=$this->db->get()->result_array();
             $results=$this->db->get()->result_array();
 
             foreach($results as $result)
@@ -272,8 +271,8 @@ class Setup_office_staff extends Root_Controller
                 $user_id=$id;
             }
             $data['user_info']['user_id']= $user_id;
-            $result=Query_helper::get_info($this->config->item('table_login_setup_user_info'),'*',array('user_id='.$user_id,'revision=1'));
-            $data['user_info']['name']= $result[0]['name'];
+            $result=Query_helper::get_info($this->config->item('table_login_setup_user_info'),'*',array('user_id='.$user_id,'revision=1'),1);
+            $data['user_info']['name']= $result['name'];
             if(!$data['user_info'])
             {
                 $ajax['status']=false;
