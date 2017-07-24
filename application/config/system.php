@@ -10,3 +10,5 @@ $config['system_status_active']='Active';
 $config['system_status_inactive']='In-Active';
 $config['system_status_delete']='Deleted';
 $config['system_image_base_url']='http://localhost/tms_2017_07/';
+
+$config['USER_TYPE_EMPLOYEE']=1;
