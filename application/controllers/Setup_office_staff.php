@@ -158,6 +158,7 @@ class Setup_office_staff extends Root_Controller
                 $this->json_return($ajax);
             }
             $this->db->from($this->config->item('table_login_setup_user').' user');
+            $this->db->select('user.employee_id');
             $this->db->select('user_info.*');
             $this->db->select('designation.name designation_name');
             $this->db->select('department.name department_name');
@@ -225,6 +226,7 @@ class Setup_office_staff extends Root_Controller
                 $this->json_return($ajax);
             }
             $this->db->from($this->config->item('table_login_setup_user').' user');
+            $this->db->select('user.employee_id');
             $this->db->select('user_info.*');
             $this->db->select('designation.name designation_name');
             $this->db->select('department.name department_name');
