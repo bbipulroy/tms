@@ -58,7 +58,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" name="coworkers[]" value="<?php echo $office_staff['id']; ?>" <?php if(in_array($office_staff['id'],$assigned_coworker)){echo 'checked';} ?>><?php echo $office_staff['name'].' - '.$office_staff['designation_name']; ?>
+                                    <input type="checkbox" name="coworkers[]" value="<?php echo $office_staff['id']; ?>" <?php if(in_array($office_staff['id'],$assigned_coworker)){echo 'checked';} ?>><?php echo $office_staff['name'].' - '.$office_staff['employee_id'].' '.'('.$office_staff['designation_name'].')'; ?>
                                 </label>
                             </div>
                         <?php
