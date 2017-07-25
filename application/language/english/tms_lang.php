@@ -26,6 +26,7 @@ $lang['ACTION_LOAD_MORE'] = 'Load More';
 $lang['ACTION_DOCUMENT'] = 'Documents';
 $lang['ACTION_ASSIGN_GROUP_ROLE'] = 'Assign Group Role';
 $lang['ACTION_ASSIGN_USER_GROUP'] = 'Assign User Group';
+$lang['ACTION_ASSIGN_DEPARTMENTS'] = 'Assign Department';
 
 //****MODULE TASK//
 
