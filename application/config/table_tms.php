@@ -8,3 +8,5 @@ $config['table_tms_setup_assign_departments'] = 'arm_tms_2017_07.tms_setup_assig
 $config['table_tms_activities_assign_user_regular_task'] = 'arm_tms_2017_07.tms_activities_assign_user_regular_task';
 //interval setup
 $config['table_tms_setup_interval'] = 'arm_tms_2017_07.tms_setup_interval';
+// regular task
+$config['table_tms_activities_regular_task'] = 'arm_tms_2017_07.tms_activities_regular_task';
