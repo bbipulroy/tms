@@ -32,6 +32,10 @@ class Setup_office_staff extends Root_Controller
         {
             $this->system_edit_coworker($id);
         }
+        elseif($action=='assign_departments')
+        {
+            $this->system_assign_departments($id);
+        }
         elseif($action=='save_subordinate_employee')
         {
             $this->system_save_subordinate_employee();
@@ -39,6 +43,10 @@ class Setup_office_staff extends Root_Controller
         elseif($action=='save_coworker')
         {
             $this->system_save_coworker();
+        }
+        elseif($action=='save_assign_departments')
+        {
+            $this->system_save_assign_departments();
         }
         elseif($action=='details')
         {
@@ -100,6 +108,7 @@ class Setup_office_staff extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
         $this->db->join($this->config->item('table_login_setup_department').' department','department.id = user_info.department_id','LEFT');
         $this->db->where('user_info.revision',1);
+        $this->db->where('user_info.user_type_id',$this->config->item('USER_TYPE_EMPLOYEE'));
         $this->db->order_by('user_info.ordering','ASC');
         if($user->user_group!=1)
         {
@@ -107,28 +116,45 @@ class Setup_office_staff extends Root_Controller
         }
         $items=$this->db->get()->result_array();
         $office_staffs=array();
-        foreach($items as $item)
+        foreach($items as &$item)
         {
+            if($item['group_name']==null)
+            {
+                $item['group_name']='Not Assigned';
+            }
             $office_staffs[$item['id']]=$item;
         }
+
         $this->db->select('user_id, COUNT(user_id) as coworker_number');
         $this->db->from($this->config->item('table_tms_setup_coworker'));
         $this->db->where('revision',1);
         $this->db->group_by('user_id');
         $coworkers=$this->db->get()->result_array();
+        foreach($coworkers as $coworker)
+        {
+            $office_staffs[$coworker['user_id']]['coworker_number']=$coworker['coworker_number'];
+        }
+
         $this->db->select('user_id, COUNT(user_id) as subordinate_number');
         $this->db->from($this->config->item('table_tms_setup_subordinate_employee'));
         $this->db->where('revision',1);
         $this->db->group_by('user_id');
         $subordinates=$this->db->get()->result_array();
-        foreach($coworkers as $coworker)
-        {
-            $office_staffs[$coworker['user_id']]['coworker_number']=$coworker['coworker_number'];
-        }
         foreach($subordinates as $subordinate)
         {
             $office_staffs[$subordinate['user_id']]['subordinate_number']=$subordinate['subordinate_number'];
         }
+
+        $this->db->select('user_id, COUNT(department_id) as total_department');
+        $this->db->from($this->config->item('table_tms_setup_assign_departments'));
+        $this->db->where('revision',1);
+        $this->db->group_by('user_id');
+        $assign_departments=$this->db->get()->result_array();
+        foreach($assign_departments as $department)
+        {
+            $office_staffs[$department['user_id']]['total_department']=$department['total_department'];
+        }
+
         $items=array();
         foreach($office_staffs as $office_staff)
         {
@@ -166,7 +192,7 @@ class Setup_office_staff extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
             $this->db->join($this->config->item('table_login_setup_department').' department','department.id = user_info.department_id','LEFT');
             $this->db->where('user_info.revision',1);
-            $this->db->where('user_info.user_type_id =',1);
+            $this->db->where('user_info.user_type_id',$this->config->item('USER_TYPE_EMPLOYEE'));
             $this->db->order_by('user_info.ordering','ASC');
             if($user->user_group!=1)
             {
@@ -234,7 +260,7 @@ class Setup_office_staff extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
             $this->db->join($this->config->item('table_login_setup_department').' department','department.id = user_info.department_id','LEFT');
             $this->db->where('user_info.revision',1);
-            $this->db->where('user_info.user_type_id =',1);
+            $this->db->where('user_info.user_type_id',$this->config->item('USER_TYPE_EMPLOYEE'));
             $this->db->order_by('user_info.ordering','ASC');
             if($user->user_group!=1)
             {
@@ -263,6 +289,54 @@ class Setup_office_staff extends Root_Controller
                 $ajax['system_message']=$this->message;
             }
             $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$user_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_assign_departments($id)
+    {
+        if(isset($this->permissions['action2']) && ($this->permissions['action2']==1))
+        {
+            if(($this->input->post('id')))
+            {
+                $user_id=$this->input->post('id');
+            }
+            else
+            {
+                $user_id=$id;
+            }
+            $user=User_helper::get_user();
+
+            $data['user_info']=Query_helper::get_info($this->config->item('table_login_setup_user_info'),'*',array('user_id ='.$user_id,'revision =1'),1);
+            if(!$data['user_info'])
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Wrong input. You use illegal way.';
+                $this->json_return($ajax);
+            }
+
+            $data['departments']=Query_helper::get_info($this->config->item('table_login_setup_department'),'*',array('status="'.$this->config->item('system_status_active').'"'),0,0,array('ordering'));
+
+            $results=Query_helper::get_info($this->config->item('table_tms_setup_assign_departments'),'department_id',array('user_id ='.$user_id,'revision =1'));
+            $data['assigned_departments']=array();
+            foreach($results as $result)
+            {
+                $data['assigned_departments'][]=$result['department_id'];
+            }
+            
+            $data['title']="Assign Multi Departments of (".$data['user_info']['name'].')';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url.'/assign_departments',$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/assign_departments/'.$user_id);
             $this->json_return($ajax);
         }
         else
@@ -455,6 +529,70 @@ class Setup_office_staff extends Root_Controller
         return true;
     }
     private function check_validation_for_coworker()
+    {
+        return true;
+    }
+    private function system_save_assign_departments()
+    {
+        $id = $this->input->post("id");
+        $user = User_helper::get_user();
+        if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+        if(!$this->check_validation_for_assign_departments())
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->message;
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $time=time();
+            $this->db->trans_start();  //DB Transaction Handle START
+
+            $departments=$this->input->post('departments');
+            
+            $revision_history_data=array();
+            $revision_history_data['date_updated']=$time;
+            $revision_history_data['user_updated']=$user->user_id;
+            Query_helper::update($this->config->item('table_tms_setup_assign_departments'),$revision_history_data,array('revision=1','user_id='.$id));
+
+            $this->db->where('user_id',$id);
+            $this->db->set('revision', 'revision+1', FALSE);
+            $this->db->update($this->config->item('table_tms_setup_assign_departments'));
+
+            if(is_array($departments))
+            {
+                foreach($departments as $department)
+                {
+                    $data=array();
+                    $data['user_id']=$id;
+                    $data['department_id']=$department;
+                    $data['user_created'] = $user->user_id;
+                    $data['date_created'] = $time;
+                    $data['revision'] = 1;
+                    Query_helper::add($this->config->item('table_tms_setup_assign_departments'),$data);
+                }
+            }
+
+            $this->db->trans_complete();   //DB Transaction Handle END
+            if ($this->db->trans_status() === TRUE)
+            {
+                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                $this->system_list();
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->json_return($ajax);
+            }
+        }
+    }
+    private function check_validation_for_assign_departments()
     {
         return true;
     }
