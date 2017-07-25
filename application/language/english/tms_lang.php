@@ -174,3 +174,6 @@ $lang['LABEL_SUBORDINATE'] = 'Subordinate';
 $lang['LABEL_COWORKER'] = 'Co-worker';
 $lang['LABEL_NUMBER_OF_DEPARTMENT'] = 'Number of Department';
 $lang['LABEL_MULTI_DEPARTMENTS'] = 'Assigned Departments';
+// Regular task
+$lang['LABEL_INTERVAL_NAME'] = 'Interval';
+
