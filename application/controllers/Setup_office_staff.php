@@ -358,9 +358,7 @@ class Setup_office_staff extends Root_Controller
             {
                 $user_id=$id;
             }
-            $data['user_info']['user_id']= $user_id;
-            $result=Query_helper::get_info($this->config->item('table_login_setup_user_info'),'*',array('user_id='.$user_id,'revision=1'),1);
-            $data['user_info']['name']= $result['name'];
+            $data['user_info']=Query_helper::get_info($this->config->item('table_login_setup_user_info'),'*',array('user_id='.$user_id,'revision=1'),1);
             if(!$data['user_info'])
             {
                 $ajax['status']=false;
@@ -393,6 +391,13 @@ class Setup_office_staff extends Root_Controller
             $this->db->where('sub.revision',1);
             $this->db->order_by('user_info.ordering','ASC');
             $data['sub_info']=$this->db->get()->result_array();
+
+            $this->db->select('dept.*');
+            $this->db->from($this->config->item('table_tms_setup_assign_departments').' ad');
+            $this->db->join($this->config->item('table_login_setup_department').' dept','dept.id=ad.department_id');
+            $this->db->where('ad.user_id',$user_id);
+            $this->db->where('ad.revision',1);
+            $data['assigned_departments']=$this->db->get()->result_array();
 
             $data['title']="Workplace relationships of ".$data['user_info']['name'];
             $ajax['status']=true;
@@ -564,6 +569,8 @@ class Setup_office_staff extends Root_Controller
             $this->db->set('revision', 'revision+1', FALSE);
             $this->db->update($this->config->item('table_tms_setup_assign_departments'));
 
+            $owner_department=Query_helper::get_info($this->config->item('table_login_setup_user_info'),'department_id',array('user_id='.$id),1);
+            $owner_department_assigned=false;
             if(is_array($departments))
             {
                 foreach($departments as $department)
@@ -575,7 +582,21 @@ class Setup_office_staff extends Root_Controller
                     $data['date_created'] = $time;
                     $data['revision'] = 1;
                     Query_helper::add($this->config->item('table_tms_setup_assign_departments'),$data);
+                    if($department==$owner_department['department_id'])
+                    {
+                        $owner_department_assigned=true;
+                    }
                 }
+            }
+            if(!$owner_department_assigned && $owner_department['department_id']!=null)
+            {
+                $data=array();
+                $data['user_id']=$id;
+                $data['department_id']=$owner_department['department_id'];
+                $data['user_created'] = $user->user_id;
+                $data['date_created'] = $time;
+                $data['revision'] = 1;
+                Query_helper::add($this->config->item('table_tms_setup_assign_departments'),$data);
             }
 
             $this->db->trans_complete();   //DB Transaction Handle END

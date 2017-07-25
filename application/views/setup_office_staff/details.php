@@ -102,6 +102,45 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
         </div>
 
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="external" data-toggle="collapse" data-target="#collapse3" href="#">
+                        <?php echo $CI->lang->line('LABEL_MULTI_DEPARTMENTS');?></a>
+                </h4>
+            </div>
+            <div id="collapse3" class="panel-collapse collapse in">
+                <?php
+                if($assigned_departments)
+                {
+                    foreach($assigned_departments as $department)
+                    {
+                        ?>
+                        <div class="row show-grid">
+                            <div class="col-xs-1">
+                                <label class="control-label pull-right"><ul class="sqr"><li></li></ul></label>
+                            </div>
+                            <div class="col-xs-6">
+                                <?php echo $department['name'];?>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
+                else
+                {
+                    ?>
+                    <div class="row show-grid">
+                        <div class="col-xs-4">
+                            <label class="control-label pull-left">None of departments assigned</label>
+                        </div>
+                    </div>
+                    <?php
+                }
+                ?>
+            </div>
+        </div>
+
     </div>
 
 </div>

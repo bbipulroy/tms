@@ -42,7 +42,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     ?>
                     <div class="checkbox">
                         <label title="<?php echo $department['name']; ?>">
-                            <input type="checkbox" name="departments[]" value="<?php echo $department['id']; ?>" <?php if(in_array($department['id'],$assigned_departments)){echo 'checked';} ?>><?php echo $department['name']; ?>
+                            <input type="checkbox" name="departments[]" value="<?php echo $department['id']; ?>"<?php if(in_array($department['id'],$assigned_departments)){echo ' checked';}if($department['id']==$user_info['department_id']){echo ' checked disabled';} ?>><?php echo $department['name']; ?>
                         </label>
                     </div>
                 <?php
