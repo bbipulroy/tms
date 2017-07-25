@@ -107,6 +107,10 @@ class Regular_tasks extends Root_Controller
             {
                 $data['self_department_name']=Query_helper::get_info($this->config->item('table_login_setup_department'),array('name'),array('id ='.$self_department_id),1);
             }
+            if($self_department_id<1)
+            {
+                $data['self_department_name']['name']='Not Assigned Yet';
+            }
             $ajax['system_page_url']=site_url($this->controller_url.'/index/add');
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/add_edit',$data,true));
@@ -223,6 +227,20 @@ class Regular_tasks extends Root_Controller
     }
     private function check_validation()
     {
+        $user = User_helper::get_user();
+        $self_department_id=$user->department_id;
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('task[name]',$this->lang->line('LABEL_NAME'),'required');
+        $this->form_validation->set_rules('task[interval_id]',$this->lang->line('LABEL_INTERVAL_NAME'),'required');
+        if(empty($self_department_id))
+        {
+            $this->form_validation->set_rules('task[department_id]',$this->lang->line('LABEL_DEPARTMENT_NAME'),'required');
+        }
+        if($this->form_validation->run() == FALSE)
+        {
+            $this->message=validation_errors();
+            return false;
+        }
         return true;
     }
 }
