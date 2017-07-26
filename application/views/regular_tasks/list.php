@@ -60,12 +60,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
     <div class="col-xs-12" style="margin-bottom: 20px;">
         <div class="col-xs-12" style="margin-bottom: 20px;">
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="id"><?php echo $CI->lang->line('ID'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="name"><?php echo $CI->lang->line('LABEL_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="department_name"><?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="interval_name"><?php echo $CI->lang->line('LABEL_INTERVAL_NAME'); ?></label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="status"><?php echo $CI->lang->line('STATUS'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="remarks"><?php echo $CI->lang->line('LABEL_REMARKS'); ?></label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="status"><?php echo $CI->lang->line('STATUS'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="ordering"><?php echo $CI->lang->line('LABEL_ORDER'); ?></label>
         </div>
     </div>
@@ -78,7 +77,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     $(document).ready(function ()
     {
         var url = "<?php echo base_url($CI->controller_url.'/index/get_items');?>";
-
         // prepare the data
         var source =
         {
@@ -88,8 +86,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'name', type: 'string' },
                 { name: 'department_name', type: 'string' },
                 { name: 'interval_name', type: 'string' },
-                { name: 'status', type: 'string' },
                 { name: 'remarks', type: 'string' },
+                { name: 'status', type: 'string' },
                 { name: 'ordering', type: 'string' }
             ],
             id: 'id',
@@ -113,12 +111,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 altrows: true,
                 autoheight: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('ID'); ?>', dataField: 'id',width:'50',cellsAlign:'right'},
                     { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?>', dataField: 'department_name',width:'300'},
                     { text: '<?php echo $CI->lang->line('LABEL_INTERVAL_NAME'); ?>', dataField: 'interval_name',width:'200'},
-                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status',width:'200'},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',width:'200'},
+                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status',width:'200'},
                     { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'200'}
                 ]
             });
