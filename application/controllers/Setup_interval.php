@@ -177,7 +177,7 @@ class Setup_interval extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $data['interval']=Query_helper::get_info($this->config->item('table_tms_setup_interval'),array('*'),array('status ="'.$this->config->item('system_status_active').'"','id='.$item_id),1);
+            $data['interval']=Query_helper::get_info($this->config->item('table_tms_setup_interval'),array('*'),array('status !="'.$this->config->item('system_status_delete').'"','id='.$item_id),1);
             if(!$data['interval'])
             {
                 $ajax['status']=false;
