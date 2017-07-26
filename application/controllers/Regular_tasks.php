@@ -246,10 +246,6 @@ class Regular_tasks extends Root_Controller
         {
             $this->form_validation->set_rules('task[department_id]',$this->lang->line('LABEL_DEPARTMENT_NAME'),'required');
         }
-        if($self_department_id && !$department_id)
-        {
-            $this->form_validation->set_rules('task[department_id]',$this->lang->line('LABEL_DEPARTMENT_NAME'),'required');
-        }
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
