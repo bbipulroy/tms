@@ -172,15 +172,21 @@ class Regular_tasks extends Root_Controller
     {
         if(isset($this->permissions['action2']) && ($this->permissions['action2']==1))
         {
-            if($id)
-            {
-                $item_id=$id;
-            }else
+            if(($this->input->post('id')))
             {
                 $item_id=$this->input->post('id');
             }
+            else
+            {
+                $item_id=$id;
+            }
+            echo 'done';
+            echo $item_id;
+            exit;
             $data['task']=Query_helper::get_info($this->config->item('table_tms_activities_regular_task'),array('*'),array('id ='.$item_id),1);
-            $data['title']="Edit User (".$data['task']['name'].')';
+//            print_r($data['task']);
+//            exit;
+            $data['title']="Edit Task (".$data['task']['name'].')';
             $user=User_helper::get_user();
             $accessed_department=Query_helper::get_info($this->config->item('table_tms_setup_assign_departments'),array('*'),array('user_id='.$user->user_id,'revision=1'));
             $this->db->from($this->config->item('table_tms_setup_interval').' interval');
