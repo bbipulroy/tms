@@ -44,8 +44,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <input type="text" name="interval[name]" id="name" class="form-control" value="<?php echo $interval['name'];?>"/>
             </div>
         </div>
-
-
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME');?><span style="color:#FF0000">*</span></label>
@@ -55,7 +53,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                     <?php
                     foreach($departments as $department)
-                    {?>
+                    {
+                    ?>
                         <option value="<?php echo $department['value']?>" <?php if($department['value']==$interval['department_id']){ echo "selected";}?>><?php echo $department['text'];?></option>
                     <?php
                     }
@@ -68,20 +67,36 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Months</label>
             </div>
             <div class="col-xs-8">
-
                 <?php
                 for($i=1;$i<13;$i++)
                 {
-
-                    ?>
+                ?>
+                    <?php  if($i==1){?>
+                        <div class="checkbox">
+                            <label><input type="checkbox" class="select_all" name="select_all" value="1"
+                                    <?php
+                                    $count=0;
+                                    for($c=1;$c<13;$c++)
+                                    {
+                                        if($interval['month_'.$c]<1)
+                                        {
+                                            break;
+                                        }
+                                        else{++$count;}
+                                    }
+                                    if($count==12)
+                                    {
+                                        echo 'checked';
+                                    }
+                                    ?>> Select All</label>
+                        </div>
+                    <?php } ?>
                     <div class="checkbox">
-                        <label><input type="checkbox" name="interval[month_<?php echo $i;?>]" value="1" <?php if($interval['month_'.$i]==1){echo 'checked';} ?>><?php echo date("F", mktime(0, 0, 0,$i,1, 2000));?></label>
+                        <label><input type="checkbox" class="select" name="interval[month_<?php echo $i;?>]" value="1" <?php if($interval['month_'.$i]==1){echo 'checked';} ?>><?php echo date("F", mktime(0, 0, 0,$i,1, 2000));?></label>
                     </div>
-
                 <?php
                 }
                 ?>
-
             </div>
         </div>
         <div class="row show-grid">
@@ -115,7 +130,28 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
         </div>
     </div>
-
     <div class="clearfix"></div>
 </form>
+
+<script type="text/javascript">
+    jQuery(document).ready(function()
+    {
+        system_preset({controller:'<?php echo $CI->router->class; ?>'});
+
+        $(document).off('change','.select_all');
+        $(document).on('change','.select_all',function(event)
+        {
+            if($(this).is(':checked'))
+            {
+                $('.select').prop('checked', true);
+            }
+            else
+            {
+                $('.select').prop('checked', false);
+
+            }
+        });
+
+    });
+</script>
 
