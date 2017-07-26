@@ -81,4 +81,42 @@ class System_helper
         $data['date_created_string']=System_helper::display_date($time);
         $CI->db->insert($CI->config->item('table_system_history_hack'), $data);
     }
+    public static function check_user_task_department($department_id=0,$task_id=0,$table_name='')
+    {
+        $CI =& get_instance();
+        $user=User_helper::get_user();
+        
+        $results=Query_helper::get_info($CI->config->item('table_tms_setup_assign_departments'),array('*'),array('user_id='.$user->user_id,'revision=1'));
+        $user_departments=array();
+        if(count($results)>0)
+        {
+            foreach($results as $result)
+            {
+                $user_departments[]=$result['department_id'];
+            }
+        }
+        else
+        {
+            $user_departments[]=$user->department_id;
+        }
+
+        if($department_id>0)
+        {
+            if(!in_array($department_id,$user_departments))
+            {
+                return false;
+            }
+        }
+
+        if($task_id>0)
+        {
+            $task_info=Query_helper::get_info($table_name,'*',array('id='.$task_id,'revision=1'),1);
+            if(!in_array($task_info['department_id'],$user_departments))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
