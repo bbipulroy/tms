@@ -246,6 +246,16 @@ class Regular_tasks extends Root_Controller
         {
             $this->form_validation->set_rules('task[department_id]',$this->lang->line('LABEL_DEPARTMENT_NAME'),'required');
         }
+        $user_id=$user->user_id;
+        $data['accessed_department']=Query_helper::get_info($this->config->item('table_tms_setup_assign_departments'),array('user_id'),array('user_id ='.$user_id));
+        $counter=count($data['accessed_department']);
+        if($counter>1 && $self_department_id)
+        {
+            if(!$department_id)
+            {
+                $this->form_validation->set_rules('task[department_id]',$this->lang->line('LABEL_DEPARTMENT_NAME'),'required');
+            }
+        }
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
