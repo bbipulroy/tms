@@ -66,14 +66,34 @@ class Regular_tasks extends Root_Controller
 
     private function system_get_items()
     {
+        $user=User_helper::get_user();
+        $accessed_department=Query_helper::get_info($this->config->item('table_tms_setup_assign_departments'),array('*'),array('user_id='.$user->user_id,'revision=1'));
         $this->db->from($this->config->item('table_tms_activities_regular_task').' rt');
         $this->db->select('rt.*');
-        $this->db->select('department.name department_name');
-        $this->db->select('interval.name interval_name');
-        $this->db->join($this->config->item('table_login_setup_department').' department','department.id = rt.department_id','LEFT');
-        $this->db->join($this->config->item('table_tms_setup_interval').' interval','interval.id = rt.interval_id','LEFT');
+        if(!$accessed_department)
+        {
+            $this->db->select('ui.user_id');
+            $this->db->select('department.name department_name');
+            $this->db->select('interval.name interval_name');
+            $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.department_id = rt.department_id','LEFT');
+            $this->db->join($this->config->item('table_tms_setup_interval').' interval','interval.id = rt.interval_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_department').' department','department.id = ui.department_id','INNER');
+            $this->db->where('ui.user_id',$user->user_id);
+            $this->db->where('ui.revision',1);
+        }else
+        {
+            $this->db->select('ad.user_id');
+            $this->db->select('department.name department_name');
+            $this->db->select('interval.name interval_name');
+            $this->db->join($this->config->item('table_tms_setup_assign_departments').' ad','ad.department_id = rt.department_id','LEFT');
+            $this->db->join($this->config->item('table_login_setup_department').' department','department.id = ad.department_id','INNER');
+            $this->db->join($this->config->item('table_tms_setup_interval').' interval','interval.id = rt.interval_id','INNER');
+            $this->db->where('ad.user_id',$user->user_id);
+            $this->db->where('ad.revision',1);
+        }
         $this->db->order_by('rt.ordering','ASC');
         $this->db->where('rt.revision',1);
+        $this->db->where('rt.status =',$this->config->item('system_status_active'));
         $items=$this->db->get()->result_array();
         $this->json_return($items);
     }
@@ -92,8 +112,28 @@ class Regular_tasks extends Root_Controller
                 'remarks' => '',
                 'ordering' => ''
             );
-            $data['intervals']=Query_helper::get_info($this->config->item('table_tms_setup_interval'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $user = User_helper::get_user();
+            $user=User_helper::get_user();
+            $accessed_department=Query_helper::get_info($this->config->item('table_tms_setup_assign_departments'),array('*'),array('user_id='.$user->user_id,'revision=1'));
+            $this->db->from($this->config->item('table_tms_setup_interval').' interval');
+            $this->db->select('interval.*');
+            if(!$accessed_department)
+            {
+                $this->db->select('ui.user_id');
+                $this->db->select('department.name department_name');
+                $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.department_id = interval.department_id','LEFT');
+                $this->db->join($this->config->item('table_login_setup_department').' department','department.id = ui.department_id','INNER');
+                $this->db->where('ui.user_id',$user->user_id);
+                $this->db->where('ui.revision',1);
+            }else
+            {
+                $this->db->select('ad.user_id');
+                $this->db->select('department.name department_name');
+                $this->db->join($this->config->item('table_tms_setup_assign_departments').' ad','ad.department_id = interval.department_id','LEFT');
+                $this->db->join($this->config->item('table_login_setup_department').' department','department.id = ad.department_id','INNER');
+                $this->db->where('ad.user_id',$user->user_id);
+                $this->db->where('ad.revision',1);
+            }
+            $data['intervals']=$this->db->get()->result_array();
             $user_id=$user->user_id;
             $self_department_id=$user->department_id;
             $this->db->from($this->config->item('table_tms_setup_assign_departments').' ad');
@@ -132,18 +172,37 @@ class Regular_tasks extends Root_Controller
     {
         if(isset($this->permissions['action2']) && ($this->permissions['action2']==1))
         {
-            if(($this->input->post('id')))
+            if($id)
             {
-                $task_id=$this->input->post('id');
-            }
-            else
+                $item_id=$id;
+            }else
             {
-                $task_id=$id;
+                $item_id=$this->input->post('id');
             }
-            $data['task']=Query_helper::get_info($this->config->item('table_tms_activities_regular_task'),array('*'),array('id ='.$task_id),1);
+            $data['task']=Query_helper::get_info($this->config->item('table_tms_activities_regular_task'),array('*'),array('id ='.$item_id),1);
             $data['title']="Edit User (".$data['task']['name'].')';
-            $data['intervals']=Query_helper::get_info($this->config->item('table_tms_setup_interval'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $user = User_helper::get_user();
+            $user=User_helper::get_user();
+            $accessed_department=Query_helper::get_info($this->config->item('table_tms_setup_assign_departments'),array('*'),array('user_id='.$user->user_id,'revision=1'));
+            $this->db->from($this->config->item('table_tms_setup_interval').' interval');
+            $this->db->select('interval.*');
+            if(!$accessed_department)
+            {
+                $this->db->select('ui.user_id');
+                $this->db->select('department.name department_name');
+                $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.department_id = interval.department_id','LEFT');
+                $this->db->join($this->config->item('table_login_setup_department').' department','department.id = ui.department_id','INNER');
+                $this->db->where('ui.user_id',$user->user_id);
+                $this->db->where('ui.revision',1);
+            }else
+            {
+                $this->db->select('ad.user_id');
+                $this->db->select('department.name department_name');
+                $this->db->join($this->config->item('table_tms_setup_assign_departments').' ad','ad.department_id = interval.department_id','LEFT');
+                $this->db->join($this->config->item('table_login_setup_department').' department','department.id = ad.department_id','INNER');
+                $this->db->where('ad.user_id',$user->user_id);
+                $this->db->where('ad.revision',1);
+            }
+            $data['intervals']=$this->db->get()->result_array();
             $user_id=$user->user_id;
             $self_department_id=$user->department_id;
             $this->db->from($this->config->item('table_tms_setup_assign_departments').' ad');
@@ -167,7 +226,7 @@ class Regular_tasks extends Root_Controller
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$task_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$item_id);
             $this->json_return($ajax);
         }
         else
@@ -241,13 +300,12 @@ class Regular_tasks extends Root_Controller
         $self_department_id=$user->department_id;
         $this->load->library('form_validation');
         $this->form_validation->set_rules('task[name]',$this->lang->line('LABEL_NAME'),'required');
-        $this->form_validation->set_rules('task[interval_id]',$this->lang->line('LABEL_INTERVAL_NAME'),'required');
         if(empty($self_department_id) && !$department_id)
         {
             $this->form_validation->set_rules('task[department_id]',$this->lang->line('LABEL_DEPARTMENT_NAME'),'required');
         }
         $user_id=$user->user_id;
-        $data['accessed_department']=Query_helper::get_info($this->config->item('table_tms_setup_assign_departments'),array('user_id'),array('user_id ='.$user_id));
+        $data['accessed_department']=Query_helper::get_info($this->config->item('table_tms_setup_assign_departments'),array('user_id'),array('user_id ='.$user_id,'revision ='.'1'));
         $counter=count($data['accessed_department']);
         if($counter>1 && $self_department_id)
         {
@@ -256,6 +314,7 @@ class Regular_tasks extends Root_Controller
                 $this->form_validation->set_rules('task[department_id]',$this->lang->line('LABEL_DEPARTMENT_NAME'),'required');
             }
         }
+        $this->form_validation->set_rules('task[interval_id]',$this->lang->line('LABEL_INTERVAL_NAME'),'required');
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
