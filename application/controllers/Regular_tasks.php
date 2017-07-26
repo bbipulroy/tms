@@ -180,9 +180,6 @@ class Regular_tasks extends Root_Controller
             {
                 $item_id=$id;
             }
-            echo 'done';
-            echo $item_id;
-            exit;
             $data['task']=Query_helper::get_info($this->config->item('table_tms_activities_regular_task'),array('*'),array('id ='.$item_id),1);
 //            print_r($data['task']);
 //            exit;
