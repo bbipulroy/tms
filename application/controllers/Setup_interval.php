@@ -373,6 +373,14 @@ class Setup_interval extends Root_Controller
                 $this->json_return($ajax);
             }
 
+            $department_id=$data['interval']['department_id'];
+            if(!$this->check_department($department_id))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You do not have access';
+                $this->json_return($ajax);
+            }
+
             $data['title']="Interval Details (".$data['interval']['name'].')';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url.'/details',$data,true));
