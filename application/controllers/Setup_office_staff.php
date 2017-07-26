@@ -167,16 +167,15 @@ class Setup_office_staff extends Root_Controller
     {
         if(isset($this->permissions['action2']) && ($this->permissions['action2']==1))
         {
-            if(($this->input->post('id')))
+            if($id)
             {
-                $user_id=$this->input->post('id');
-            }
-            else
+                $item_id=$id;
+            }else
             {
-                $user_id=$id;
+                $item_id=$this->input->post('id');
             }
             $user=User_helper::get_user();
-            $data['user']=Query_helper::get_info($this->config->item('table_login_setup_user'),array('id','employee_id','user_name','status'),array('id ='.$user_id),1);
+            $data['user']=Query_helper::get_info($this->config->item('table_login_setup_user'),array('id','employee_id','user_name','status'),array('id ='.$item_id),1);
             if(!$data['user'])
             {
                 $ajax['status']=false;
@@ -198,7 +197,7 @@ class Setup_office_staff extends Root_Controller
             {
                 $this->db->where('user_info.user_group !=',1);
             }
-            $this->db->where('user.id !=',$user_id);
+            $this->db->where('user.id !=',$item_id);
             $this->db->where('user.status =',$this->config->item('system_status_active'));
             $results=$this->db->get()->result_array();
 
@@ -206,13 +205,13 @@ class Setup_office_staff extends Root_Controller
             {
                 $data['office_staffs'][$result['department_id']][]=$result;
             }
-            $results=Query_helper::get_info($this->config->item('table_tms_setup_subordinate_employee'),'*',array('user_id ='.$user_id,'revision =1'));
+            $results=Query_helper::get_info($this->config->item('table_tms_setup_subordinate_employee'),'*',array('user_id ='.$item_id,'revision =1'));
             $data['assigned_subordinate_employee']=array();
             foreach($results as $result)
             {
                 $data['assigned_subordinate_employee'][]=$result['subordinate_id'];
             }
-            $data['staff_info']=Query_helper::get_info($this->config->item('table_login_setup_user_info'),'*',array('user_id ='.$user_id,'revision =1'),1);
+            $data['staff_info']=Query_helper::get_info($this->config->item('table_login_setup_user_info'),'*',array('user_id ='.$item_id,'revision =1'),1);
             $data['title']="Edit Subordinate Employee of (".$data['staff_info']['name'].')';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url.'/edit_subordinate_employee',$data,true));
@@ -220,7 +219,7 @@ class Setup_office_staff extends Root_Controller
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$user_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$item_id);
             $this->json_return($ajax);
         }
         else
@@ -235,16 +234,15 @@ class Setup_office_staff extends Root_Controller
     {
         if(isset($this->permissions['action2']) && ($this->permissions['action2']==1))
         {
-            if(($this->input->post('id')))
+            if($id)
             {
-                $user_id=$this->input->post('id');
-            }
-            else
+                $item_id=$id;
+            }else
             {
-                $user_id=$id;
+                $item_id=$this->input->post('id');
             }
             $user=User_helper::get_user();
-            $data['user']=Query_helper::get_info($this->config->item('table_login_setup_user'),array('id','employee_id','user_name','status'),array('id ='.$user_id),1);
+            $data['user']=Query_helper::get_info($this->config->item('table_login_setup_user'),array('id','employee_id','user_name','status'),array('id ='.$item_id),1);
             if(!$data['user'])
             {
                 $ajax['status']=false;
@@ -266,7 +264,7 @@ class Setup_office_staff extends Root_Controller
             {
                 $this->db->where('user_info.user_group !=',1);
             }
-            $this->db->where('user.id !=',$user_id);
+            $this->db->where('user.id !=',$item_id);
             $this->db->where('user.status =',$this->config->item('system_status_active'));
             $results=$this->db->get()->result_array();
 
@@ -274,13 +272,13 @@ class Setup_office_staff extends Root_Controller
             {
                 $data['office_staffs'][$result['department_id']][]=$result;
             }
-            $results=Query_helper::get_info($this->config->item('table_tms_setup_coworker'),'*',array('user_id ='.$user_id,'revision =1'));
+            $results=Query_helper::get_info($this->config->item('table_tms_setup_coworker'),'*',array('user_id ='.$item_id,'revision =1'));
             $data['assigned_coworker']=array();
             foreach($results as $result)
             {
                 $data['assigned_coworker'][]=$result['coworker_id'];
             }
-            $data['coworker_info']=Query_helper::get_info($this->config->item('table_login_setup_user_info'),'*',array('user_id ='.$user_id,'revision =1'),1);
+            $data['coworker_info']=Query_helper::get_info($this->config->item('table_login_setup_user_info'),'*',array('user_id ='.$item_id,'revision =1'),1);
             $data['title']="Edit Coworker of (".$data['coworker_info']['name'].')';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url.'/edit_coworker',$data,true));
@@ -288,7 +286,7 @@ class Setup_office_staff extends Root_Controller
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$user_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$item_id);
             $this->json_return($ajax);
         }
         else
