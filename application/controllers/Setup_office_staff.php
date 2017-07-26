@@ -567,7 +567,7 @@ class Setup_office_staff extends Root_Controller
             $this->db->set('revision', 'revision+1', FALSE);
             $this->db->update($this->config->item('table_tms_setup_assign_departments'));
 
-            $owner_department=Query_helper::get_info($this->config->item('table_login_setup_user_info'),'department_id',array('user_id='.$id),1);
+            $owner_department=Query_helper::get_info($this->config->item('table_login_setup_user_info'),'department_id',array('user_id='.$id,'revision=1'),1);
             $owner_department_assigned=false;
             if(is_array($departments))
             {
