@@ -232,13 +232,17 @@ class Regular_tasks extends Root_Controller
     private function check_validation()
     {
         $task_info=$this->input->post('task');
-        $department_id=$task_info['department_id'];
+        $department_id=false;
+        if(isset($task_info['department_id']))
+        {
+            $department_id=$task_info['department_id'];
+        }
         $user = User_helper::get_user();
         $self_department_id=$user->department_id;
         $this->load->library('form_validation');
         $this->form_validation->set_rules('task[name]',$this->lang->line('LABEL_NAME'),'required');
         $this->form_validation->set_rules('task[interval_id]',$this->lang->line('LABEL_INTERVAL_NAME'),'required');
-        if(empty($self_department_id) || !$department_id)
+        if(empty($self_department_id) && !$department_id)
         {
             $this->form_validation->set_rules('task[department_id]',$this->lang->line('LABEL_DEPARTMENT_NAME'),'required');
         }
