@@ -32,9 +32,21 @@ class Regular_tasks extends Root_Controller
         {
             $this->system_edit($id);
         }
+        elseif($action=='details')
+        {
+            $this->system_details($id);
+        }
+        elseif($action=='assign_users')
+        {
+            $this->system_assign_users($id);
+        }
         elseif($action=='save')
         {
             $this->system_save();
+        }
+        elseif($action=='save_assign_users')
+        {
+            $this->system_save_assign_users();
         }
         else
         {
@@ -237,6 +249,72 @@ class Regular_tasks extends Root_Controller
         }
     }
 
+    private function system_assign_users($id)
+    {
+        if(isset($this->permissions['action2']) && ($this->permissions['action2']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+
+            $user=User_helper::get_user();
+
+            $data['item']=Query_helper::get_info($this->config->item('table_tms_activities_regular_task'),'*',array('id ='.$item_id),1);
+            if(!$data['item'])
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Wrong input. You use illegal way.';
+                $this->json_return($ajax);
+            }
+            if(!System_helper::check_user_task_department(0,$item_id,$this->config->item('table_tms_activities_regular_task')))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You violate your rules.';
+                $this->json_return($ajax);
+            }
+
+            $this->db->select('user.id,user.employee_id');
+            $this->db->select('user_info.name');
+            $this->db->select('designation.name designation_name');
+            $this->db->from($this->config->item('table_login_setup_user').' user');
+            $this->db->join($this->config->item('table_tms_setup_subordinate_employee').' soe','soe.subordinate_id=user.id','INNER');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
+            $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id=user_info.designation','LEFT');
+            $this->db->where('soe.user_id',$user->user_id);
+            $this->db->where('soe.revision',1);
+            $this->db->where('user_info.revision',1);
+            $data['subordinates']=$this->db->get()->result_array();
+
+            $results=Query_helper::get_info($this->config->item('table_tms_activities_assign_user_regular_task'),'user_id',array('regular_task_id ='.$item_id,'revision =1'));
+            $data['assigned_users']=array();
+            foreach($results as $result)
+            {
+                $data['assigned_users'][]=$result['user_id'];
+            }
+            
+            $data['title']="Assign Users to Regular Task (".$data['item']['name'].')';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url.'/assign_users',$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/assign_users/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
     private function system_save()
     {
         $id = $this->input->post("id");
@@ -320,6 +398,76 @@ class Regular_tasks extends Root_Controller
             $this->message=validation_errors();
             return false;
         }
+        return true;
+    }
+    private function system_save_assign_users()
+    {
+        $id = $this->input->post("id");
+        $user = User_helper::get_user();
+        if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+        if(!$this->check_validation_for_assign_users())
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->message;
+            $this->json_return($ajax);
+        }
+        if(!System_helper::check_user_task_department(0,$id,$this->config->item('table_tms_activities_regular_task')))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='You violate your rules.';
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $time=time();
+            $this->db->trans_start();  //DB Transaction Handle START
+
+            $users=$this->input->post('users');
+            
+            $revision_history_data=array();
+            $revision_history_data['date_updated']=$time;
+            $revision_history_data['user_updated']=$user->user_id;
+            Query_helper::update($this->config->item('table_tms_activities_assign_user_regular_task'),$revision_history_data,array('revision=1','regular_task_id='.$id));
+
+            $this->db->where('regular_task_id',$id);
+            $this->db->set('revision', 'revision+1', FALSE);
+            $this->db->update($this->config->item('table_tms_activities_assign_user_regular_task'));
+
+            if(is_array($users))
+            {
+                foreach($users as $assign_user)
+                {
+                    $data=array();
+                    $data['regular_task_id']=$id;
+                    $data['user_id']=$assign_user;
+                    $data['user_created'] = $user->user_id;
+                    $data['date_created'] = $time;
+                    $data['revision'] = 1;
+                    Query_helper::add($this->config->item('table_tms_activities_assign_user_regular_task'),$data);
+                }
+            }
+
+            $this->db->trans_complete();   //DB Transaction Handle END
+            if ($this->db->trans_status() === TRUE)
+            {
+                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                $this->system_list();
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->json_return($ajax);
+            }
+        }
+    }
+    private function check_validation_for_assign_users()
+    {
         return true;
     }
 }
