@@ -107,7 +107,7 @@ class Regular_tasks extends Root_Controller
             {
                 $data['self_department_name']=Query_helper::get_info($this->config->item('table_login_setup_department'),array('name'),array('id ='.$self_department_id),1);
             }
-            if($self_department_id<1)
+            if(empty($self_department_id))
             {
                 $data['self_department_name']['name']='Not Assigned Yet';
             }
@@ -156,6 +156,10 @@ class Regular_tasks extends Root_Controller
             if(empty($data['accessed_departments']))
             {
                 $data['self_department_name']=Query_helper::get_info($this->config->item('table_login_setup_department'),array('name'),array('id ='.$self_department_id),1);
+            }
+            if(empty($self_department_id))
+            {
+                $data['self_department_name']['name']='Self Department Needed To Edit';
             }
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url.'/add_edit',$data,true));
@@ -227,12 +231,14 @@ class Regular_tasks extends Root_Controller
     }
     private function check_validation()
     {
+        $task_info=$this->input->post('task');
+        $department_id=$task_info['department_id'];
         $user = User_helper::get_user();
         $self_department_id=$user->department_id;
         $this->load->library('form_validation');
         $this->form_validation->set_rules('task[name]',$this->lang->line('LABEL_NAME'),'required');
         $this->form_validation->set_rules('task[interval_id]',$this->lang->line('LABEL_INTERVAL_NAME'),'required');
-        if(empty($self_department_id))
+        if(empty($self_department_id) || !$department_id)
         {
             $this->form_validation->set_rules('task[department_id]',$this->lang->line('LABEL_DEPARTMENT_NAME'),'required');
         }
