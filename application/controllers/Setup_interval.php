@@ -184,6 +184,14 @@ class Setup_interval extends Root_Controller
                 $ajax['system_message']='Wrong input. You use illegal way.';
                 $this->json_return($ajax);
             }
+            $department_id=$data['interval']['department_id'];
+            if(!$this->check_department($department_id))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You do not have access';
+                $this->json_return($ajax);
+            }
+
             $user=User_helper::get_user();
             $this->db->from($this->config->item('table_tms_setup_assign_departments').' ad');
             $this->db->select('ad.department_id value');
@@ -250,6 +258,13 @@ class Setup_interval extends Root_Controller
         else
         {
             $data=$this->input->post('interval');
+            $department_id=$data['department_id'];
+            if(!$this->check_department($department_id))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You try to break the rules!! Please Select your Department';
+                $this->json_return($ajax);
+            }
             for($i=1;$i<13;$i++)
             {
                 if(!array_key_exists('month_'.$i,$data))
@@ -309,17 +324,40 @@ class Setup_interval extends Root_Controller
         return true;
     }
 
+    private function check_department($department_id)
+    {
+        $user=User_helper::get_user();
+        $results=Query_helper::get_info($this->config->item('table_tms_setup_assign_departments'),array('*'),array('user_id='.$user->user_id,'revision=1'));
+        if($results)
+        {
+            foreach($results as $result)
+            {
+                $check[]=$result['department_id'];
+            }
+        }
+        else
+        {
+            $check[]=$user->department_id;
+        }
+
+        if(!in_array($department_id, $check))
+        {
+            return false;
+        }
+        return true;
+    }
+
     private function system_details($id)
     {
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
-            if(($this->input->post('id')))
+            if($id>0)
             {
-                $item_id=$this->input->post('id');
+                $item_id=$id;
             }
             else
             {
-                $item_id=$id;
+                $item_id=$this->input->post('id');
             }
 
             $this->db->from($this->config->item('table_tms_setup_interval').' si');
