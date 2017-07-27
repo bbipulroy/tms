@@ -56,24 +56,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
-            <?php if(empty($accessed_departments)){?>
-                <div class="col-sm-4 col-xs-8">
-                    <label class="control-label pull-left"><?php echo $self_department_name['name'];?></label>
-                </div>
-            <?php } else{?>
-                <div class="col-sm-4 col-xs-8">
-                    <select id="department_id" name="task[department_id]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <?php
-                        foreach($accessed_departments as $accessed_department)
-                        {?>
-                            <option value="<?php echo $accessed_department['department_id']?>" <?php if($accessed_department['department_id']==$task['department_id']){ echo "selected";}?>><?php echo $accessed_department['department_name'];?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-            <?php } ?>
+            <div class="col-sm-4 col-xs-8">
+                <select id="department_id" name="task[department_id]" class="form-control">
+                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <?php
+                    foreach($departments as $department)
+                    {?>
+                        <option value="<?php echo $department['id']?>" <?php if($department['id']==$task['department_id']){ echo "selected";}?>><?php echo $department['name'];?></option>
+                    <?php
+                    }
+                    ?>
+                </select>
+            </div>
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
