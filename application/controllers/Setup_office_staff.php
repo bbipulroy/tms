@@ -167,7 +167,7 @@ class Setup_office_staff extends Root_Controller
     {
         if(isset($this->permissions['action2']) && ($this->permissions['action2']==1))
         {
-            if($id)
+            if($id>0)
             {
                 $item_id=$id;
             }else
