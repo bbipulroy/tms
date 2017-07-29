@@ -44,24 +44,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <input type="text" name="interval[name]" id="name" class="form-control" value="<?php echo $interval['name'];?>"/>
             </div>
         </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME');?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="department_id" name="interval[department_id]" class="form-control" tabindex="-1">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($departments as $department)
-                    {
-                    ?>
-                        <option value="<?php echo $department['value']?>" <?php if($department['value']==$interval['department_id']){ echo "selected";}?>><?php echo $department['text'];?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right">Months</label>
@@ -154,4 +136,3 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     });
 </script>
-

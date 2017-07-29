@@ -6,11 +6,20 @@ $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url)
 );
+if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
+{
+    $action_buttons[]=array(
+        'label'=>$CI->lang->line("ACTION_EDIT"),
+        'href'=>site_url($CI->controller_url.'/index/edit/'.$interval['id'])
+    );
+}
+$action_buttons[]=array(
+    'label'=>$CI->lang->line("ACTION_REFRESH"),
+    'href'=>site_url($CI->controller_url.'/index/details/'.$interval['id'])
+);
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
-<style>
-    ul.sqr {list-style-type: square;}
-</style>
+
 <div class="row widget">
     <div class="widget-header">
         <div class="title">
@@ -21,19 +30,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_INTERVAL_NAME');?></label>
+            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_NAME');?></label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $interval['name'];?></label>
-        </div>
-    </div>
-
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DEPARTMENT_NAME');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $interval['department_name'];?></label>
+            <?php echo $interval['name'];?>
         </div>
     </div>
 
@@ -48,7 +48,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     if($interval['month_'.$i]==1)
                     {
             ?>
-                        <label class="control-label"><ul class="sqr"><li><?php echo date("F", mktime(0, 0, 0,$i,1, 2000));?></li></ul></label><br>
+                        <ul><li><?php echo date("F", mktime(0, 0, 0,$i,1, 2000));?></li></ul>
             <?php
                     }
                 }
@@ -61,7 +61,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $interval['remarks'];?></label>
+            <?php echo $interval['remarks'];?>
         </div>
     </div>
 
@@ -70,7 +70,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <label class="control-label pull-right"><?php echo $this->lang->line('STATUS');?></label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $interval['status'];?></label>
+            <?php echo $interval['status'];?>
         </div>
     </div>
 

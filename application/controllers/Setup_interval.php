@@ -73,30 +73,8 @@ class Setup_interval extends Root_Controller
         $items=array();
         $month=array();
         $user=User_helper::get_user();
-        $check=Query_helper::get_info($this->config->item('table_tms_setup_assign_departments'),array('*'),array('user_id='.$user->user_id,'revision=1'));
 
-        $this->db->from($this->config->item('table_tms_setup_interval').' si');
-        $this->db->select('si.*');
-        if(count($check)==0)
-        {
-            $this->db->select('ui.user_id');
-            $this->db->select('sd.name department_name');
-            $this->db->join($this->config->item('table_login_setup_user_info').' ui','ui.department_id = si.department_id','LEFT');
-            $this->db->join($this->config->item('table_login_setup_department').' sd','sd.id = ui.department_id','INNER');
-            $this->db->where('ui.user_id',$user->user_id);
-            $this->db->where('ui.revision',1);
-        }
-        else
-        {
-            $this->db->select('asd.user_id');
-            $this->db->select('sd.name department_name');
-            $this->db->join($this->config->item('table_tms_setup_assign_departments').' asd','asd.department_id = si.department_id','LEFT');
-            $this->db->join($this->config->item('table_login_setup_department').' sd','sd.id = asd.department_id','INNER');
-            $this->db->where('asd.user_id',$user->user_id);
-            $this->db->where('asd.revision',1);
-        }
-        $this->db->where('sd.status',$this->config->item('system_status_active'));
-        $items=$this->db->get()->result_array();
+        $items=Query_helper::get_info($this->config->item('table_tms_setup_interval'),'*',array('status="'.$this->config->item('system_status_active').'"'));
 
         foreach($items as $index=>&$item)
         {
@@ -124,7 +102,6 @@ class Setup_interval extends Root_Controller
             $data['interval']=array(
                 'id' => 0,
                 'name' => '',
-                'department_id' => '',
                 'remarks' => '',
                 'status' => 'Active'
             );
@@ -134,19 +111,6 @@ class Setup_interval extends Root_Controller
             }
             $data['title']="Create Interval";
 
-            $user=User_helper::get_user();
-            $this->db->from($this->config->item('table_tms_setup_assign_departments').' ad');
-            $this->db->select('ad.department_id value');
-            $this->db->select('sd.name text');
-            $this->db->join($this->config->item('table_login_setup_department').' sd','sd.id = ad.department_id','INNER');
-            $this->db->where('ad.user_id',$user->user_id);
-            $this->db->where('ad.revision',1);
-            $this->db->where('sd.status',$this->config->item('system_status_active'));
-            $data['departments']=$this->db->get()->result_array();
-            if(!$data['departments'])
-            {
-                $data['departments']=Query_helper::get_info($this->config->item('table_login_setup_department'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"','id='.$user->department_id));
-            }
 
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url.'/add_edit',$data,true));
@@ -177,33 +141,12 @@ class Setup_interval extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $data['interval']=Query_helper::get_info($this->config->item('table_tms_setup_interval'),array('*'),array('status !="'.$this->config->item('system_status_delete').'"','id='.$item_id),1);
+            $data['interval']=Query_helper::get_info($this->config->item('table_tms_setup_interval'),array('*'),array('status ="'.$this->config->item('system_status_active').'"','id='.$item_id),1);
             if(!$data['interval'])
             {
                 $ajax['status']=false;
                 $ajax['system_message']='Wrong input. You use illegal way.';
                 $this->json_return($ajax);
-            }
-            $department_id=$data['interval']['department_id'];
-            if(!$this->check_department($department_id))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='You do not have access';
-                $this->json_return($ajax);
-            }
-
-            $user=User_helper::get_user();
-            $this->db->from($this->config->item('table_tms_setup_assign_departments').' ad');
-            $this->db->select('ad.department_id value');
-            $this->db->select('sd.name text');
-            $this->db->join($this->config->item('table_login_setup_department').' sd','sd.id = ad.department_id','INNER');
-            $this->db->where('ad.user_id',$user->user_id);
-            $this->db->where('ad.revision',1);
-            $this->db->where('sd.status',$this->config->item('system_status_active'));
-            $data['departments']=$this->db->get()->result_array();
-            if(!$data['departments'])
-            {
-                $data['departments']=Query_helper::get_info($this->config->item('table_login_setup_department'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"','id='.$user->department_id));
             }
 
             $data['title']="Edit Interval (".$data['interval']['name'].")";
@@ -235,7 +178,6 @@ class Setup_interval extends Root_Controller
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
-                die();
             }
         }
         else
@@ -245,8 +187,6 @@ class Setup_interval extends Root_Controller
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
-                die();
-
             }
         }
         if(!$this->check_validation())
@@ -258,13 +198,6 @@ class Setup_interval extends Root_Controller
         else
         {
             $data=$this->input->post('interval');
-            $department_id=$data['department_id'];
-            if(!$this->check_department($department_id))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='You try to break the rules!! Please Select your Department';
-                $this->json_return($ajax);
-            }
             for($i=1;$i<13;$i++)
             {
                 if(!array_key_exists('month_'.$i,$data))
@@ -313,35 +246,11 @@ class Setup_interval extends Root_Controller
     {
         $this->load->library('form_validation');
         $this->form_validation->set_rules('interval[name]',$this->lang->line('LABEL_NAME'),'required');
-        $this->form_validation->set_rules('interval[department_id]',$this->lang->line('LABEL_DEPARTMENT_NAME'),'required');
         $this->form_validation->set_rules('interval[status]',$this->lang->line('STATUS'),'required');
 
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
-            return false;
-        }
-        return true;
-    }
-
-    private function check_department($department_id)
-    {
-        $user=User_helper::get_user();
-        $results=Query_helper::get_info($this->config->item('table_tms_setup_assign_departments'),array('*'),array('user_id='.$user->user_id,'revision=1'));
-        if($results)
-        {
-            foreach($results as $result)
-            {
-                $check[]=$result['department_id'];
-            }
-        }
-        else
-        {
-            $check[]=$user->department_id;
-        }
-
-        if(!in_array($department_id, $check))
-        {
             return false;
         }
         return true;
@@ -360,24 +269,11 @@ class Setup_interval extends Root_Controller
                 $item_id=$this->input->post('id');
             }
 
-            $this->db->from($this->config->item('table_tms_setup_interval').' si');
-            $this->db->select('si.*');
-            $this->db->select('sd.name department_name');
-            $this->db->join($this->config->item('table_login_setup_department').' sd','sd.id = si.department_id','INNER');
-            $this->db->where('si.id',$item_id);
-            $data['interval']=$this->db->get()->row_array();
+            $data['interval']=Query_helper::get_info($this->config->item('table_tms_setup_interval'),'*',array('id='.$item_id),1);
             if(!$data['interval'])
             {
                 $ajax['status']=false;
                 $ajax['system_message']='Wrong input. You use illegal way.';
-                $this->json_return($ajax);
-            }
-
-            $department_id=$data['interval']['department_id'];
-            if(!$this->check_department($department_id))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='You do not have access';
                 $this->json_return($ajax);
             }
 
