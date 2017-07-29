@@ -20,15 +20,6 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
         'data-action-link'=>site_url($CI->controller_url.'/index/edit_coworker')
     );
 }
-if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
-{
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line('ACTION_ASSIGN_DEPARTMENTS'),
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/assign_departments')
-    );
-}
 $action_buttons[]=array(
     'type'=>'button',
     'label'=>$CI->lang->line('ACTION_DETAILS'),
@@ -79,7 +70,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="department_name"><?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="subordinate_number"><?php echo $CI->lang->line('LABEL_NUMBER_OF_SUBORDINATE'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="coworker_number"><?php echo $CI->lang->line('LABEL_NUMBER_OF_COWORKER'); ?></label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="total_department"><?php echo $CI->lang->line('LABEL_NUMBER_OF_DEPARTMENT'); ?></label>
         </div>
     </div>
     <div class="col-xs-12" id="system_jqx_container">
@@ -106,8 +96,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'designation_name', type: 'string' },
                 { name: 'department_name', type: 'string' },
                 { name: 'subordinate_number', type: 'int' },
-                { name: 'coworker_number', type: 'int' },
-                { name: 'total_department', type: 'int' }
+                { name: 'coworker_number', type: 'int' }
             ],
             id: 'id',
             url: url
@@ -132,13 +121,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columns: [
                     { text: '<?php echo $CI->lang->line('ID'); ?>', dataField: 'id',width:'50',cellsAlign:'right'},
                     { text: '<?php echo $CI->lang->line('LABEL_EMPLOYEE_ID'); ?>', dataField: 'employee_id',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',width:'300'},
+                    { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name'},
                     { text: '<?php echo $CI->lang->line('LABEL_USER_GROUP'); ?>', dataField: 'group_name',width:'200',filtertype:'list',hidden:true},
                     { text: '<?php echo $CI->lang->line('LABEL_DESIGNATION_NAME'); ?>', dataField: 'designation_name',width:'200'},
                     { text: '<?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?>', dataField: 'department_name',width:'200'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_SUBORDINATE'); ?>', dataField: 'subordinate_number',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_COWORKER'); ?>', dataField: 'coworker_number',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_DEPARTMENT'); ?>', dataField: 'total_department',width:'150'}
+                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_SUBORDINATE'); ?>', dataField: 'subordinate_number',width:'160'},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_COWORKER'); ?>', dataField: 'coworker_number',width:'150'}
                 ]
             });
     });
