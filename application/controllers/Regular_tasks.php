@@ -177,22 +177,14 @@ class Regular_tasks extends Root_Controller
                 $ajax['system_message']='Wrong input. You use illegal way.';
                 $this->json_return($ajax);
             }
-            if(!System_helper::check_user_task_department(0,$item_id,$this->config->item('table_tms_activities_regular_task')))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']='You violate your rules.';
-                $this->json_return($ajax);
-            }
 
             $this->db->select('user.id,user.employee_id');
             $this->db->select('user_info.name');
             $this->db->select('designation.name designation_name');
             $this->db->from($this->config->item('table_login_setup_user').' user');
-            $this->db->join($this->config->item('table_tms_setup_subordinate_employee').' soe','soe.subordinate_id=user.id','INNER');
             $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
             $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id=user_info.designation','LEFT');
-            $this->db->where('soe.user_id',$user->user_id);
-            $this->db->where('soe.revision',1);
+            $this->db->where('user_info.department_id',$data['item']['department_id']);
             $this->db->where('user_info.revision',1);
             $data['subordinates']=$this->db->get()->result_array();
 
@@ -295,12 +287,6 @@ class Regular_tasks extends Root_Controller
         {
             $ajax['status']=false;
             $ajax['system_message']=$this->message;
-            $this->json_return($ajax);
-        }
-        if(!System_helper::check_user_task_department(0,$id,$this->config->item('table_tms_activities_regular_task')))
-        {
-            $ajax['status']=false;
-            $ajax['system_message']='You violate your rules.';
             $this->json_return($ajax);
         }
         else
