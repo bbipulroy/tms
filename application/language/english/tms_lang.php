@@ -176,7 +176,7 @@ $lang['LABEL_COWORKER'] = 'Co-worker';
 $lang['LABEL_NUMBER_OF_DEPARTMENT'] = 'Number of Department';
 $lang['LABEL_MULTI_DEPARTMENTS'] = 'Assigned Departments';
 // Regular task
-$lang['LABEL_INTERVAL_NAME'] = 'Interval';
+$lang['LABEL_INTERVAL_NAME'] = 'Duration';
 $lang['LABEL_TASK_NAME'] = 'Regular Task';
 //Interval setup
 $lang['LABEL_MONTH'] = 'Month';
