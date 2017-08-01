@@ -100,6 +100,8 @@ class Setup_office_staff extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
         $this->db->join($this->config->item('table_login_setup_department').' department','department.id = user_info.department_id','LEFT');
         $this->db->where('user_info.revision',1);
+        $this->db->where('user.status',$this->config->item('system_status_active'));
+
         $this->db->where('user_info.user_type_id',$this->config->item('USER_TYPE_EMPLOYEE'));
         $this->db->order_by('user_info.ordering','ASC');
         if($user->user_group!=1)
@@ -136,7 +138,6 @@ class Setup_office_staff extends Root_Controller
         {
             $office_staffs[$subordinate['user_id']]['subordinate_number']=$subordinate['subordinate_number'];
         }
-
         $items=array();
         foreach($office_staffs as $office_staff)
         {
@@ -297,7 +298,6 @@ class Setup_office_staff extends Root_Controller
                 $ajax['system_message']='Wrong input. You use illegal way.';
                 $this->json_return($ajax);
             }
-
             $this->db->from($this->config->item('table_tms_setup_coworker').' co');
             $this->db->select('co.coworker_id');
             $this->db->select('user_info.name co_name,user_info.ordering');
