@@ -184,6 +184,7 @@ class Regular_tasks extends Root_Controller
             $this->db->from($this->config->item('table_login_setup_user').' user');
             $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
             $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id=user_info.designation','LEFT');
+            $this->db->where('user.status',$this->config->item('system_status_active'));
             $this->db->where('user_info.department_id',$data['item']['department_id']);
             $this->db->where('user_info.revision',1);
             $data['subordinates']=$this->db->get()->result_array();
