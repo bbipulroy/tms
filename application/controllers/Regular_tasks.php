@@ -103,7 +103,6 @@ class Regular_tasks extends Root_Controller
                 'interval_id' => '',
                 'department_id' => '',
                 'remarks' => '',
-                'ordering' => '',
                 'status' => $this->config->item('system_status_active')
             );
             $data['departments']=Query_helper::get_info($this->config->item('table_login_setup_department'),'*',array('status ="'.$this->config->item('system_status_active').'"'));
