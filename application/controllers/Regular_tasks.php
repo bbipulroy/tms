@@ -84,8 +84,9 @@ class Regular_tasks extends Root_Controller
         $this->db->select('interval.name interval_name');
         $this->db->join($this->config->item('table_login_setup_department').' department','department.id = rt.department_id','LEFT');
         $this->db->join($this->config->item('table_tms_setup_interval').' interval','interval.id = rt.interval_id','LEFT');
-        $this->db->order_by('rt.ordering','ASC');
+        $this->db->where('rt.status !=',$this->config->item('system_status_delete'));
         $this->db->where('rt.revision',1);
+        $this->db->order_by('rt.id','DESC');
         $items=$this->db->get()->result_array();
         $this->json_return($items);
     }
@@ -102,7 +103,8 @@ class Regular_tasks extends Root_Controller
                 'interval_id' => '',
                 'department_id' => '',
                 'remarks' => '',
-                'ordering' => ''
+                'ordering' => '',
+                'status' => $this->config->item('system_status_active')
             );
             $data['departments']=Query_helper::get_info($this->config->item('table_login_setup_department'),'*',array('status ="'.$this->config->item('system_status_active').'"'));
             $data['intervals']=Query_helper::get_info($this->config->item('table_tms_setup_interval'),'*',array('status ="'.$this->config->item('system_status_active').'"'));
