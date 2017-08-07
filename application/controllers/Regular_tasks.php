@@ -208,14 +208,12 @@ class Regular_tasks extends Root_Controller
             $this->db->where('user_info.department_id',$data['item']['department_id']);
             $this->db->where('user_info.revision',1);
             $data['subordinates']=$this->db->get()->result_array();
-
             $results=Query_helper::get_info($this->config->item('table_tms_activities_assign_user_regular_task'),'user_id',array('regular_task_id ='.$item_id,'revision =1'));
             $data['assigned_users']=array();
             foreach($results as $result)
             {
                 $data['assigned_users'][]=$result['user_id'];
             }
-            
             $data['title']="Assign Users to Regular Task (".$data['item']['name'].')';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url.'/assign_users',$data,true));
