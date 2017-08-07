@@ -69,6 +69,30 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </select>
             </div>
         </div>
+        <div style="<?php if(!($task['department_id']>0)){echo 'display:none';} ?>" class="row show-grid" id="employee_id_container">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ASSIGN_EMPLOYEE');?><span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <div id="employee_id">
+                    <?php
+                    if($task['id']>0)
+                    {
+                        foreach($subordinates as $subordinate)
+                        {
+                            ?>
+                            <div class="checkbox">
+                                <label title="<?php echo $subordinate['name']; ?>">
+                                    <input type="checkbox" name="users[]" value="<?php echo $subordinate['id']; ?>"<?php if(in_array($subordinate['id'],$assigned_users)){echo ' checked';} ?>><?php echo $subordinate['name'].' - '.$subordinate['employee_id'].' ('.$subordinate['designation_name'].')'; ?>
+                                </label>
+                            </div>
+                        <?php
+                        }
+                    }
+                    ?>
+                </div>
+            </div>
+        </div>
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_INTERVAL_NAME');?><span style="color:#FF0000">*</span></label>
@@ -94,12 +118,35 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <textarea name="task[remarks]" class="form-control"><?php echo $task['remarks']; ?></textarea>
             </div>
         </div>
+
         <div style="" class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ORDER');?></label>
+                <label for="status" class="control-label pull-right"><?php echo $CI->lang->line('STATUS');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="task[ordering]" class="form-control" value="<?php echo $task['ordering'] ?>" >
+                <select id="status" name="task[status]" class="form-control">
+                    <!--<option value=""></option>-->
+                    <option value="<?php echo $CI->config->item('system_status_active'); ?>"
+                        <?php
+                        if ($task['status'] == $CI->config->item('system_status_active')) {
+                            echo "selected='selected'";
+                        }
+                        ?> ><?php echo $CI->lang->line('ACTIVE') ?>
+                    </option>
+                    <option value="<?php echo $CI->config->item('system_status_inactive'); ?>"
+                        <?php
+                        if ($task['status'] == $CI->config->item('system_status_inactive')) {
+                            echo "selected='selected'";
+                        }
+                        ?> ><?php echo $CI->lang->line('INACTIVE') ?></option>
+                    <option value="<?php echo $CI->config->item('system_status_delete'); ?>"
+                        <?php
+                        if ($task['status'] == $CI->config->item('system_status_delete')) {
+                            echo "selected='selected'";
+                        }
+                        ?> ><?php echo $CI->lang->line('DELETE') ?></option>
+
+                </select>
             </div>
         </div>
     </div>
@@ -110,6 +157,36 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     jQuery(document).ready(function()
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
+        $(document).off('change','#department_id');
+        $(document).on("change","#department_id",function()
+        {
+            var department_id=$("#department_id").val();
+            if(department_id>0)
+            {
+                $('#employee_id_container').show();
+                $.ajax({
+                    url: base_url+"common_controller/get_employee_by_department_id/",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data:{department_id:department_id},
+                    success: function (data, status)
+                    {
+
+                    },
+                    error: function (xhr, desc, err)
+                    {
+                        console.log("error");
+
+                    }
+                });
+            }
+            else
+            {
+                $('#employee_id_container').hide();
+            }
+        });
+
+
     });
 </script>
 
