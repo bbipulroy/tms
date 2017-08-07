@@ -104,7 +104,7 @@ class Regular_tasks extends Root_Controller
                 'name' => '',
                 'description' => '',
                 'interval_id' => '',
-                'department_id' => '',
+                'department_id' => 0,
                 'remarks' => '',
                 'status' => $this->config->item('system_status_active')
             );
@@ -139,6 +139,22 @@ class Regular_tasks extends Root_Controller
                 $item_id=$this->input->post('id');
             }
             $data['task']=Query_helper::get_info($this->config->item('table_tms_activities_regular_task'),array('*'),array('id ='.$item_id),1);
+            $this->db->select('user.id,user.employee_id');
+            $this->db->select('user_info.name');
+            $this->db->select('designation.name designation_name');
+            $this->db->from($this->config->item('table_login_setup_user').' user');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
+            $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id=user_info.designation','LEFT');
+            $this->db->where('user.status',$this->config->item('system_status_active'));
+            $this->db->where('user_info.department_id',$data['task']['department_id']);
+            $this->db->where('user_info.revision',1);
+            $data['subordinates']=$this->db->get()->result_array();
+            $results=Query_helper::get_info($this->config->item('table_tms_activities_assign_user_regular_task'),'user_id',array('regular_task_id ='.$item_id,'revision =1'));
+            $data['assigned_users']=array();
+            foreach($results as $result)
+            {
+                $data['assigned_users'][]=$result['user_id'];
+            }
             $data['title']="Edit Task (".$data['task']['name'].')';
             $data['departments']=Query_helper::get_info($this->config->item('table_login_setup_department'),'*',array('status ="'.$this->config->item('system_status_active').'"'));
             $data['intervals']=Query_helper::get_info($this->config->item('table_tms_setup_interval'),'*',array('status ="'.$this->config->item('system_status_active').'"'));
@@ -305,11 +321,32 @@ class Regular_tasks extends Root_Controller
             $this->db->where('id',$id);
             $this->db->set('revision', 'revision+1', FALSE);
             $this->db->update($this->config->item('table_tms_activities_regular_task'));
+            $assigned_user_revision_data=array();
+            $assigned_user_revision_data['date_updated']=$time;
+            $assigned_user_revision_data['user_updated']=$user->user_id;
+            Query_helper::update($this->config->item('table_tms_activities_assign_user_regular_task'),$assigned_user_revision_data,array('revision=1','regular_task_id='.$id));
+            $this->db->where('regular_task_id',$id);
+            $this->db->set('revision', 'revision+1', FALSE);
+            $this->db->update($this->config->item('table_tms_activities_assign_user_regular_task'));
             $data=$this->input->post('task');
             $data['user_created'] = $user->user_id;
             $data['date_created'] = $time;
             $data['revision'] = 1;
-            Query_helper::add($this->config->item('table_tms_activities_regular_task'),$data);
+            $task_id=Query_helper::add($this->config->item('table_tms_activities_regular_task'),$data);
+            $users=$this->input->post('users');
+            if(is_array($users))
+            {
+                foreach($users as $assign_user)
+                {
+                    $assign_user_data=array();
+                    $assign_user_data['regular_task_id']=$task_id;
+                    $assign_user_data['user_id']=$assign_user;
+                    $assign_user_data['user_created'] = $user->user_id;
+                    $assign_user_data['date_created'] = $time;
+                    $assign_user_data['revision'] = 1;
+                    Query_helper::add($this->config->item('table_tms_activities_assign_user_regular_task'),$assign_user_data);
+                }
+            }
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
             {
