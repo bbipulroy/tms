@@ -161,6 +161,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).on("change","#department_id",function()
         {
             var department_id=$("#department_id").val();
+            var task_id=$("#id").val();
+
             if(department_id>0)
             {
                 $('#employee_id_container').show();
@@ -168,7 +170,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     url: base_url+"common_controller/get_employee_by_department_id/",
                     type: 'POST',
                     datatype: "JSON",
-                    data:{department_id:department_id},
+                    data:{department_id:department_id,task_id:task_id},
                     success: function (data, status)
                     {
 
