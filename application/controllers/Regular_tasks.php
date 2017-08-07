@@ -332,7 +332,7 @@ class Regular_tasks extends Root_Controller
             $data['user_created'] = $user->user_id;
             $data['date_created'] = $time;
             $data['revision'] = 1;
-            $task_id=Query_helper::add($this->config->item('table_tms_activities_regular_task'),$data);
+            $task_id=Query_helper::add($this->config->item('table_tms_activities_regular_task'),$data,$save_history=false);
             $users=$this->input->post('users');
             if(is_array($users))
             {
@@ -344,7 +344,7 @@ class Regular_tasks extends Root_Controller
                     $assign_user_data['user_created'] = $user->user_id;
                     $assign_user_data['date_created'] = $time;
                     $assign_user_data['revision'] = 1;
-                    Query_helper::add($this->config->item('table_tms_activities_assign_user_regular_task'),$assign_user_data);
+                    Query_helper::add($this->config->item('table_tms_activities_assign_user_regular_task'),$assign_user_data,$save_history=false);
                 }
             }
             $this->db->trans_complete();   //DB Transaction Handle END
