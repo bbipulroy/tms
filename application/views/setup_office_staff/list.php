@@ -125,8 +125,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_USER_GROUP'); ?>', dataField: 'group_name',width:'200',filtertype:'list',hidden:true},
                     { text: '<?php echo $CI->lang->line('LABEL_DESIGNATION_NAME'); ?>', dataField: 'designation_name',width:'200'},
                     { text: '<?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?>', dataField: 'department_name',width:'200'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_SUBORDINATE'); ?>', dataField: 'subordinate_number',width:'160'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_COWORKER'); ?>', dataField: 'coworker_number',width:'150'}
+                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_SUBORDINATE'); ?>', dataField: 'subordinate_number',width:'160',cellsAlign:'right',filtertype:'list'},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_COWORKER'); ?>', dataField: 'coworker_number',width:'150',cellsAlign:'right',filtertype:'list'}
                 ]
             });
     });
