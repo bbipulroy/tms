@@ -27,7 +27,7 @@ $lang['ACTION_DOCUMENT'] = 'Documents';
 $lang['ACTION_ASSIGN_GROUP_ROLE'] = 'Assign Group Role';
 $lang['ACTION_ASSIGN_USER_GROUP'] = 'Assign User Group';
 $lang['ACTION_ASSIGN_DEPARTMENTS'] = 'Assign Department';
-$lang['ACTION_ASSIGN_USERS_TASK'] = 'Assign Users to Task';
+$lang['ACTION_ASSIGN_USERS_TASK'] = 'Change Users';
 
 //****MODULE TASK//
 
