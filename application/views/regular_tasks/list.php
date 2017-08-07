@@ -72,6 +72,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="name"><?php echo $CI->lang->line('LABEL_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="department_name"><?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="interval_name"><?php echo $CI->lang->line('LABEL_INTERVAL_NAME'); ?></label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="number_of_user"><?php echo $CI->lang->line('LABEL_NUMBER_OF_ASSIGNED_USER'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="status"><?php echo $CI->lang->line('STATUS'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column" checked value="ordering"><?php echo $CI->lang->line('LABEL_ORDER'); ?></label>
         </div>

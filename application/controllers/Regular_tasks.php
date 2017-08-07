@@ -82,10 +82,13 @@ class Regular_tasks extends Root_Controller
         $this->db->select('rt.*');
         $this->db->select('department.name department_name');
         $this->db->select('interval.name interval_name');
+        $this->db->select('au_rt.regular_task_id, COUNT(au_rt.regular_task_id) as number_of_user');
         $this->db->join($this->config->item('table_login_setup_department').' department','department.id = rt.department_id','LEFT');
         $this->db->join($this->config->item('table_tms_setup_interval').' interval','interval.id = rt.interval_id','LEFT');
+        $this->db->join($this->config->item('table_tms_activities_assign_user_regular_task').' au_rt','au_rt.regular_task_id = rt.id AND au_rt.revision = 1','LEFT');
         $this->db->where('rt.status !=',$this->config->item('system_status_delete'));
         $this->db->where('rt.revision',1);
+        $this->db->group_by('rt.id');
         $this->db->order_by('rt.id','DESC');
         $items=$this->db->get()->result_array();
         $this->json_return($items);
