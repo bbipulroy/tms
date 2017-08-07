@@ -124,8 +124,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?>', dataField: 'department_name',width:'250'},
                     { text: '<?php echo $CI->lang->line('LABEL_INTERVAL_NAME'); ?>', dataField: 'interval_name',width:'220',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_ASSIGNED_USER'); ?>', dataField: 'number_of_user',width:'180',cellsAlign:'right',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status',width:'120',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'100',cellsAlign:'right'}
+                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status',width:'120',filtertype: 'list'}
                 ]
             });
     });
