@@ -180,5 +180,6 @@ $lang['LABEL_ASSIGN_USERS'] = 'Assigned Users';
 $lang['LABEL_INTERVAL_NAME'] = 'Duration';
 $lang['LABEL_TASK_NAME'] = 'Regular Task';
 $lang['LABEL_NUMBER_OF_ASSIGNED_USER'] = 'Number of Assigned User';
+$lang['LABEL_ASSIGN_EMPLOYEE'] = 'Assign Employee';
 //Interval setup
 $lang['LABEL_MONTH'] = 'Month';
