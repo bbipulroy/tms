@@ -167,7 +167,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 $('#employee_id_container').show();
                 $.ajax({
-                    url: base_url+"common_controller/get_employee_by_department_id/",
+                    url: base_url+"regular_tasks/get_employee_by_department_id/",
                     type: 'POST',
                     datatype: "JSON",
                     data:{department_id:department_id,task_id:task_id},
